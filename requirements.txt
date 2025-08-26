@@ -2,8 +2,8 @@ streamlit
 pandas
 matplotlib
 numpy
-python.dotenv
-PIL
+python-dotenv
+pillow
 openpyxl
 reportlab
-supabase
+supabase-py
