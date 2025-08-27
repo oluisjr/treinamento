@@ -53,10 +53,9 @@ ordem_areas = [
 ]
 
 # === CONFIGURAÇÃO STREAMLIT ===
-favicon = Image.open(FAVICON_PATH).resize((48, 24))
 st.set_page_config(
     layout="wide",
-    page_title="CSN - Treinamentos")
+    page_title="Treinamentos")
 
 st.title("Painel de Treinamentos Pendentes")
 if st.session_state.get('importacao_sucesso', False):
