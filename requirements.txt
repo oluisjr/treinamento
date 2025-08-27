@@ -1,11 +1,9 @@
-pip>=25.2
-
 streamlit
 pandas
 matplotlib
 numpy
 python-dotenv
-Pillow
+pillow
 openpyxl
 reportlab
-supabase-py
+supabase
