@@ -56,10 +56,8 @@ ordem_areas = [
 favicon = Image.open(FAVICON_PATH).resize((48, 24))
 st.set_page_config(
     layout="wide",
-    page_title="CSN - Treinamentos",
-    page_icon=favicon
-)
-st.image(LOGO_PATH, width=180)
+    page_title="CSN - Treinamentos")
+
 st.title("Painel de Treinamentos Pendentes")
 if st.session_state.get('importacao_sucesso', False):
     st.success("Dados do Excel importados e aplicados com sucesso!")
