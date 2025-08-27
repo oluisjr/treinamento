@@ -229,8 +229,7 @@ def exportar_para_excel_com_grafico(fig):
         df_pivo.to_excel(writer, index=False, sheet_name='Base Completa')
         
         # Carrega o workbook para adicionar a imagem
-        workbook = writer.book
-        worksheet = workbook.create_sheet(title='Gráfico')
+        workbook = writer.sheets['Base Completa']
 
         # Salva o gráfico que foi passado como argumento para um buffer de imagem
         img_buffer = BytesIO()
@@ -242,11 +241,12 @@ def exportar_para_excel_com_grafico(fig):
 
         # Define o tamanho da imagem para ocupar aproximadamente 20x15 células
         # Ajustes podem ser necessários dependendo da largura/altura padrão das colunas/linhas
-        img.height = 300  # Altura em pixels (aprox. 20 linhas * 15 pontos/linha)
+        img.height = 400  # Altura em pixels (aprox. 20 linhas * 15 pontos/linha)
         img.width = 900   # Largura em pixels (aprox. 15 colunas * 60 pontos/coluna)
-        
+
+        anchor_cell = f"A{len(df_pivo) + 3}"
         # Adiciona a imagem à planilha 'Gráfico', ancorada na célula A1
-        worksheet.add_image(img, 'A1')
+        worksheet.add_image(img, anchor_cell)
 
     output.seek(0)
     return output
@@ -284,7 +284,7 @@ else:
                     st.download_button(
                         label="Baixar Excel", # NOVO LABEL
                         data=excel_data_com_grafico,
-                        file_name="relatorio_treinamentos_com_grafico.xlsx", # NOVO NOME
+                        file_name="relatorio_treinamentos.xlsx", # NOVO NOME
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
             except Exception as e:
