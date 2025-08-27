@@ -282,7 +282,7 @@ else:
                 excel_data_com_grafico = exportar_para_excel_com_grafico(fig) 
                 if excel_data_com_grafico:
                     st.download_button(
-                        label="Baixar Excel (Dados + Gráfico)", # NOVO LABEL
+                        label="Baixar Excel", # NOVO LABEL
                         data=excel_data_com_grafico,
                         file_name="relatorio_treinamentos_com_grafico.xlsx", # NOVO NOME
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
