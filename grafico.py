@@ -258,7 +258,7 @@ else:
                 excel_data = exportar_para_excel_pivo()
                 if excel_data:
                     st.download_button(
-                        label="📥 Baixar Base Completa (Excel)",
+                        label="Baixar Base Completa (Excel)",
                         data=excel_data,
                         file_name="treinamentos_base_completa.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
@@ -268,7 +268,7 @@ else:
 
 
 # === ÁREA PROTEGIDA PARA EDIÇÃO ===
-with st.expander("🔑 Editar dados (restrito)", expanded=st.session_state["autenticado"]):
+with st.expander("Editar dados (restrito)", expanded=st.session_state["autenticado"]):
     if not st.session_state["autenticado"]:
         senha = st.text_input("Senha de edição", type="password", key="senha_login")
         if senha == SENHA_EDICAO:
@@ -296,7 +296,7 @@ with st.expander("🔑 Editar dados (restrito)", expanded=st.session_state["aute
         st.divider()
         
         # === IMPORTAÇÃO EXCEL ===
-        st.markdown("#### Importar Excel para atualização em massa")
+        st.markdown("#### Importar arquivo Excel (.xlsx)")
         uploaded_file = st.file_uploader("Escolha o arquivo Excel", type=["xlsx"])
 
         if uploaded_file is not None:
