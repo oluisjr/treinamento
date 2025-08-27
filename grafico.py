@@ -275,20 +275,20 @@ else:
         st.pyplot(fig)
 
         col1_exp, col2_exp = st.columns(2)
-              with col1_exp:
-                  try:
-                      # A variável 'fig' já foi criada por gerar_grafico() e exibida com st.pyplot()
-                      # Agora passamos a mesma 'fig' para a função de exportação
-                      excel_data_com_grafico = exportar_para_excel_com_grafico(fig) 
-                      if excel_data_com_grafico:
-                          st.download_button(
-                              label="Baixar Excel (Dados + Gráfico)", # NOVO LABEL
-                              data=excel_data_com_grafico,
-                              file_name="relatorio_treinamentos_com_grafico.xlsx", # NOVO NOME
-                              mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                          )
-                  except Exception as e:
-                      st.error(f"Erro ao gerar Excel com gráfico: {e}")
+        with col1_exp:
+            try:
+                # A variável 'fig' já foi criada por gerar_grafico() e exibida com st.pyplot()
+                # Agora passamos a mesma 'fig' para a função de exportação
+                excel_data_com_grafico = exportar_para_excel_com_grafico(fig) 
+                if excel_data_com_grafico:
+                    st.download_button(
+                        label="Baixar Excel (Dados + Gráfico)", # NOVO LABEL
+                        data=excel_data_com_grafico,
+                        file_name="relatorio_treinamentos_com_grafico.xlsx", # NOVO NOME
+                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    )
+            except Exception as e:
+                st.error(f"Erro ao gerar Excel com gráfico: {e}")
 
 # === ÁREA PROTEGIDA PARA EDIÇÃO ===
 with st.expander("Editar dados (restrito)", expanded=st.session_state["autenticado"]):
