@@ -229,7 +229,8 @@ def exportar_para_excel_com_grafico(fig):
         df_pivo.to_excel(writer, index=False, sheet_name='Base Completa')
         
         # Carrega o workbook para adicionar a imagem
-        workbook = writer.sheets['Base Completa']
+        workbook = writer.book
+        worksheet = workbook['Base Completa']
 
         # Salva o gráfico que foi passado como argumento para um buffer de imagem
         img_buffer = BytesIO()
@@ -239,8 +240,6 @@ def exportar_para_excel_com_grafico(fig):
         # Cria um objeto de imagem Excel a partir do buffer
         img = ExcelImage(img_buffer)
 
-        # Define o tamanho da imagem para ocupar aproximadamente 20x15 células
-        # Ajustes podem ser necessários dependendo da largura/altura padrão das colunas/linhas
         img.height = 400  # Altura em pixels (aprox. 20 linhas * 15 pontos/linha)
         img.width = 900   # Largura em pixels (aprox. 15 colunas * 60 pontos/coluna)
 
