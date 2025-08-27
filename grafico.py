@@ -186,18 +186,18 @@ def gerar_grafico(df, mes1, mes2):
     plt.tight_layout()
     return fig
 
-def exportar_para_excel_pivo():
+def exportar_para_excel_com_grafico(fig):
+    # --- Início: Lógica para gerar a tabela de dados (igual à sua função original) ---
     response = supabase.table("treinamentos").select("*").execute()
     dados = response.data
     
     df_raw = pd.DataFrame(dados)
     if df_raw.empty:
-        st.error("Nenhum dado encontrado na tabela 'treinamentos'.")
+        st.error("Nenhum dado encontrado na tabela 'treinamentos' para exportar.")
         return None
 
     df_raw.columns = df_raw.columns.str.lower()
     df_raw["mes"] = df_raw["mes"].str.strip().str.title()
-    # Normaliza a área para ordenação correta
     df_raw["area_proc"] = df_raw["area"].apply(normalizar_texto)
 
     df_pivo = df_raw.pivot_table(index='area_proc', columns='mes', values=['em_dia', 'vencido'], fill_value=0)
@@ -206,11 +206,9 @@ def exportar_para_excel_pivo():
     df_pivo.columns = [f"{mes} Em Dia" if tipo == 'em_dia' else f"{mes} Vencido" for tipo, mes in df_pivo.columns]
     df_pivo.reset_index(inplace=True)
     
-    # Ordena com base na área de processamento
     df_pivo['area_proc'] = pd.Categorical(df_pivo['area_proc'], categories=ordem_areas_processamento, ordered=True)
     df_pivo = df_pivo.sort_values('area_proc')
     
-    # Mapeia de volta para nomes de exibição
     df_pivo['area'] = df_pivo['area_proc'].map(mapa_nomes)
     
     meses_ordem = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
@@ -221,12 +219,36 @@ def exportar_para_excel_pivo():
         if f"{mes} Vencido" in df_pivo.columns:
             colunas_ordenadas.append(f"{mes} Vencido")
 
-    df_pivo = df_pivo[colunas_ordenadas]
+    # Garante que apenas colunas existentes sejam selecionadas
+    colunas_finais = [col for col in colunas_ordenadas if col in df_pivo.columns]
+    df_pivo = df_pivo[colunas_finais]
 
+    # Converte o DataFrame para um objeto Excel na memória
     output = BytesIO()
-    df_pivo.to_excel(output, index=False, sheet_name='Base Completa')
-    output.seek(0)
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df_pivo.to_excel(writer, index=False, sheet_name='Base Completa')
+        
+        # Carrega o workbook para adicionar a imagem
+        workbook = writer.book
+        worksheet = workbook.create_sheet(title='Gráfico')
 
+        # Salva o gráfico que foi passado como argumento para um buffer de imagem
+        img_buffer = BytesIO()
+        fig.savefig(img_buffer, format='png', bbox_inches='tight')
+        img_buffer.seek(0)
+        
+        # Cria um objeto de imagem Excel a partir do buffer
+        img = ExcelImage(img_buffer)
+
+        # Define o tamanho da imagem para ocupar aproximadamente 20x15 células
+        # Ajustes podem ser necessários dependendo da largura/altura padrão das colunas/linhas
+        img.height = 300  # Altura em pixels (aprox. 20 linhas * 15 pontos/linha)
+        img.width = 900   # Largura em pixels (aprox. 15 colunas * 60 pontos/coluna)
+        
+        # Adiciona a imagem à planilha 'Gráfico', ancorada na célula A1
+        worksheet.add_image(img, 'A1')
+
+    output.seek(0)
     return output
 
 # === INTERFACE ===
@@ -253,19 +275,20 @@ else:
         st.pyplot(fig)
 
         col1_exp, col2_exp = st.columns(2)
-        with col1_exp:
-            try:
-                excel_data = exportar_para_excel_pivo()
-                if excel_data:
-                    st.download_button(
-                        label="Baixar Base Completa (Excel)",
-                        data=excel_data,
-                        file_name="treinamentos_base_completa.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                    )
-            except Exception as e:
-                st.error(f"Erro ao gerar Excel: {e}")
-
+              with col1_exp:
+                  try:
+                      # A variável 'fig' já foi criada por gerar_grafico() e exibida com st.pyplot()
+                      # Agora passamos a mesma 'fig' para a função de exportação
+                      excel_data_com_grafico = exportar_para_excel_com_grafico(fig) 
+                      if excel_data_com_grafico:
+                          st.download_button(
+                              label="Baixar Excel (Dados + Gráfico)", # NOVO LABEL
+                              data=excel_data_com_grafico,
+                              file_name="relatorio_treinamentos_com_grafico.xlsx", # NOVO NOME
+                              mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                          )
+                  except Exception as e:
+                      st.error(f"Erro ao gerar Excel com gráfico: {e}")
 
 # === ÁREA PROTEGIDA PARA EDIÇÃO ===
 with st.expander("Editar dados (restrito)", expanded=st.session_state["autenticado"]):
