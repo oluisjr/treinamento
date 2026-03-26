@@ -18,9 +18,9 @@ from unidecode import unidecode
 load_dotenv()
 
 # === CONEXÃO SUPABASE ===
-SUPABASE_URL = st.secrets('SUPABASE_URL')
-SUPABASE_KEY = st.secrets('SUPABASE_KEY')
-SENHA_EDICAO = st.secrets('SENHA_EDICAO')
+SUPABASE_URL = st.secrets['SUPABASE_URL']
+SUPABASE_KEY = st.secrets['SUPABASE_KEY']
+SENHA_EDICAO = st.secrets['SENHA_EDICAO']
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
